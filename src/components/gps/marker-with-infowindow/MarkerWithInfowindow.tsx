@@ -10,18 +10,14 @@ const MarkerWithInfowindow = () => {
         <>
             <AdvancedMarker
                 ref={markerRef}
-                onClick={() => setInfowindowOpen(true)}
-                position={{lat: 28, lng: -82}}
-                title={'AdvancedMarker that opens an Infowindow when clicked.'}
+                position={{lat: 35.092830194194086, lng:136.87946177662857}}
             />
             {infowindowOpen && (
                 <InfoWindow
                     anchor={marker}
                     maxWidth={200}
                     onCloseClick={() => setInfowindowOpen(false)}>
-                    This is an example for the{' '}
-                    <code style={{whiteSpace: 'nowrap'}}>&lt;AdvancedMarker /&gt;</code>{' '}
-                    combined with an Infowindow.
+                    ここは名古屋港水族館から一番近い警察署
                 </InfoWindow>
             )}
         </>

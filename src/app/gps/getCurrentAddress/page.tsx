@@ -1,27 +1,9 @@
 "use client"
-import React, {useEffect, useState} from 'react';
+import React  from 'react';
+import useGetCurrentAddress from "@/hooks/useGetCurrentAddress";
 
 const GetCurrentAddress = () => {
-
-        const [location, setLocation] = useState({ lat: null, lng: null });
-
-        useEffect(() => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        setLocation({
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                        });
-                    },
-                    (error) => {
-                        console.error("Error getting location:", error);
-                    }
-                );
-            } else {
-                console.error("Geolocation is not supported by this browser.");
-            }
-        }, []);
+        const {location} = useGetCurrentAddress()
 
         return (
             <div>

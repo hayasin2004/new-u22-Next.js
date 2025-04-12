@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import urlBase64ToUint8Array from "@/utils/urlBase64ToUint8Array";
+import {sendNotification, subscribeUser, unsubscribeUser} from "@/acitons/pwa/pwaAcitons";
+import urlBase64ToUint8Array from "../../../../utils/urlBase64ToUint8Array";
 
 const PushNotificationManager = () => {
 
@@ -17,13 +18,13 @@ const PushNotificationManager = () => {
     useEffect(() => {
         if ("serviceWorker" in navigator && "PushManager" in window) {
             setIsSupported(true)
-            // registerServiceWorker()
+            registerServiceWorker()
         }
     }, [])
 
     // このコードはサービスワーカを登録し、プッシュ通知のサブスクリプション情報を取得する用の非同期関数
     const registerServiceWorker = async () => {
-        const registration = await navigator.serviceWorker.register('/sw.ts', {
+        const registration = await navigator.serviceWorker.register('/sw.js', {
             scope: '/',
             updateViaCache: "none",
         })
@@ -43,18 +44,18 @@ const PushNotificationManager = () => {
         })
         setSubscription(sub)
         const serializeSub = JSON.parse(JSON.stringify(sub))
-        // await  subscribeUser(serializeSub)
+        await  subscribeUser(serializeSub)
     }
 
     const unSubscribeFromPush = async () => {
         await subscription?.unsubscribe()
         setSubscription(null)
-        // await unSubscribeUser()
+        await unsubscribeUser()
     }
 
     const sendTestNotification = async () => {
         if (subscription) {
-            // await sendNotification(message)
+            await sendNotification(message)
             setMessage("")
         }
     }

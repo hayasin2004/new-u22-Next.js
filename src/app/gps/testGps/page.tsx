@@ -26,7 +26,7 @@ const MapContent = () => {
                     <Map
                         defaultZoom={15}
                         mapId={"307c4270c2518d3c"}
-                        style={{width: `${dimensions.width}px`, height:`${dimensions.height}`}}
+                        style={{width: `${dimensions.width}px`, height:`${dimensions.height}px`}}
                          defaultCenter={{lat: location.lat!, lng: location.lng!}}>
                         {/* simple marker */}
                         <Marker

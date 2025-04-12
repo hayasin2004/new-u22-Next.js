@@ -1,5 +1,5 @@
 "use client"
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {kyotoTourist} from "@/dummyData/kyotoTourist";
 import {AdvancedMarker, APIProvider, InfoWindow, Map, useAdvancedMarkerRef} from "@vis.gl/react-google-maps";
 import useResponsiveScreen from "@/hooks/useResponsiveScreen";

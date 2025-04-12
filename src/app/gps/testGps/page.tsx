@@ -8,20 +8,25 @@ import {
     Marker,
     Pin
 } from '@vis.gl/react-google-maps';
-
-import ControlPanel from "@/components/gps/control-panel/ControlPanel";
+　
 import MovingMarker from "@/components/gps/moving-marker/MovingMarker";
 import MarkerWithInfowindow from "@/components/gps/marker-with-infowindow/MarkerWithInfowindow";
 import useGetCurrentAddress from "@/hooks/useGetCurrentAddress";
+import useResponsiveScreen from "@/hooks/useResponsiveScreen";
 
 const MapContent = () => {
     const {location} = useGetCurrentAddress()
     console.log(location.lng, location.lat)
+    const {dimensions} = useResponsiveScreen()
+
     return (
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
             {location ?
                 <>
-                    <Map defaultZoom={15} mapId={"307c4270c2518d3c"} style={{width: "1800px", height: "1800px"}}
+                    <Map
+                        defaultZoom={15}
+                        mapId={"307c4270c2518d3c"}
+                        style={{width: `${dimensions.width}px`, height:`${dimensions.height}`}}
                          defaultCenter={{lat: location.lat!, lng: location.lng!}}>
                         {/* simple marker */}
                         <Marker

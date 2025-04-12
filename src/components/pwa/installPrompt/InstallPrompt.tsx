@@ -26,7 +26,7 @@ const InstallPrompt = () => {
                 <p>
                     アプリをインストールする際には⎋ボタンを押してください。
                     <span role="img" aria-label="share icon">{' '}⎋{' '}</span>
-                    and then "Add to Home Screen"
+                    ホーム画面にアプリを追加してください！
                     <span role="img" aria-label="plus icon">{' '}➕{' '}</span>.
                 </p>
             )}

@@ -2,28 +2,15 @@
 import React, {useEffect, useState} from 'react';
 import {kyotoTourist} from "@/dummyData/kyotoTourist";
 import {AdvancedMarker, APIProvider, InfoWindow, Map, useAdvancedMarkerRef} from "@vis.gl/react-google-maps";
+import useResponsiveScreen from "@/hooks/useResponsiveScreen";
 
 
 const KyotoTouristSpot = () => {
     // ダミーデータにピンを指す用のやつ
     const [markerRef] = useAdvancedMarkerRef();
 
-    // 端末に合わせて位置情報を合わせる物　→　カスタムフックであとから用意したい。
-    const [dimensions, setDimensions] = useState({width: 0, height: 0});
-
-    useEffect(() => {
-        // ここで端末ごとの幅高さを状態管理している
-        const handleResize = () => {
-            setDimensions({width: window.innerWidth, height: window.innerHeight});
-        }
-        handleResize()
-
-    //     ここで端末のウィンドウサイズ変更を監視
-        window.addEventListener("resize", handleResize);
-
-        return () => window.removeEventListener("resize", handleResize);
-
-    }, []);
+    // 端末に合わせて位置情報を合わせる物　→　カスタムフックであとから用意したい。　作成済
+    const {dimensions} = useResponsiveScreen()
 
     const [selectedSpot, setSelectedSpot]
         = useState<{ lat: number , lng: number ,description: string} | null>(null)

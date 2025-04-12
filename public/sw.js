@@ -18,8 +18,7 @@ self.addEventListener('push', function (event) {
 self.addEventListener('notificationclick', function (event) {
     console.log("通知をクリックして受け取りました")
     event.notification.close()
-    const targetUrl = event.notification.data.useLocal
-        ? "http://localhost:3000/"
-        : "https://new-u22-next-js-git-development-pwa-hayasin2004s-projects.vercel.app/"
-    event.waitUntil(clients.openWindow(targetUrl))
+    event.waitUntil(clients.openWindow(
+        "https://new-u22-next-js-git-development-pwa-hayasin2004s-projects.vercel.app/"
+    ))
 })

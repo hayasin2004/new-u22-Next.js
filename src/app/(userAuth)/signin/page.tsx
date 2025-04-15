@@ -1,7 +1,7 @@
 'use client'
 import React, {useState} from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/repository/prisma/NextAuthRepository";
 
  const SignIn = () => {
     const router = useRouter();
@@ -12,11 +12,11 @@ import { signIn } from "next-auth/react";
         e.preventDefault();
         const response = await signIn(email, username, password);
         console.log(response);
-        router.push("/Login");
+        router.push("/login");
 
     }
     const handleChange = () => {
-        router.push('/Login');
+        router.push('/login');
     }
 
 

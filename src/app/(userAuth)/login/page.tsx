@@ -1,7 +1,7 @@
 'use client'
 import React, {useState} from "react";
 import { useRouter } from "next/navigation";
-import {signIn} from "next-auth/react";
+// import { signIn } from "@/repository/prisma/NextAuthRepository";
 
  const LogIn = () => {
     const router = useRouter();

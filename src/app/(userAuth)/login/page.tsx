@@ -5,7 +5,6 @@ import {signIn} from "next-auth/react";
 
  const LogIn = () => {
     const router = useRouter();
-    const [name, setName] =useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -22,7 +21,7 @@ import {signIn} from "next-auth/react";
         if(result?.error){
             window.alert(result?.error);
         }else{
-            router.push('/');
+            router.push('/Home');
         }
 
     }
@@ -34,10 +33,6 @@ import {signIn} from "next-auth/react";
     return (
         <div>
             <form>
-            <label>name</label>
-            <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}/>
             <label>email</label>
             <input
                 value={email}

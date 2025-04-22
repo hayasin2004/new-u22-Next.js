@@ -1,6 +1,6 @@
 "use client"
 import React, {useState} from 'react';
-import {kyotoTourist} from "@/dummyData/kyotoTourist";
+import {Tourist} from "@/dummyData/Tourist";
 import {AdvancedMarker, APIProvider, InfoWindow, Map, useAdvancedMarkerRef} from "@vis.gl/react-google-maps";
 import useResponsiveScreen from "@/hooks/useResponsiveScreen";
 
@@ -15,7 +15,7 @@ const KyotoTouristSpot = () => {
     const [selectedSpot, setSelectedSpot]
         = useState<{ lat: number , lng: number ,description: string} | null>(null)
     console.log(JSON.stringify(selectedSpot))
-    const kyotoTouristData = kyotoTourist
+    const kyotoTouristData = Tourist
 
     // dimensions →　寸法って意味
     if (dimensions.width == 0 || dimensions.height == 0) {

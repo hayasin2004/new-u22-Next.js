@@ -19,6 +19,10 @@ const MapContent = () => {
     const {location} = useGetCurrentAddress()
     console.log(location.lng, location.lat)
     const {dimensions} = useResponsiveScreen()
+    let status = 1
+
+
+
 
     return (
         <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>

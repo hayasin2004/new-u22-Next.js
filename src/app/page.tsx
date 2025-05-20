@@ -1,12 +1,14 @@
 // import MapContent from "@/app/gps/testGps/page";
-import Notification from "@/app/pwa/notification/page";
+// import Notification from "@/app/pwa/notification/page";
+import MapContent from "@/app/gps/testGps/page";
+import KyotoTouristSpot from "@/app/gps/kyoto-tourist-spot/page";
 
 
 export default function Home() {
   return (
     <div >
-      {/*<MapContent/>*/}
-        <Notification/>
+      <KyotoTouristSpot/>
+        {/*<Notification/>*/}
     </div>
   );
 }

@@ -5,10 +5,43 @@
     height: 100%;
 }
 
-@media (max-width: 440px) {
+.arrow{
+    top: 50%;
+    left: 75%;
+    border-radius: 30px;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    margin-top:300px ;
+    padding: 6px 0;
+}
+
+.underDisplay button{
+    top: 50%;
+    left: 75%;
+    border-radius: 30px;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    position: absolute;
+    margin-top:370px ;
+    padding: 6px 0;
+    font-weight: bold;
+    width: 150px;
+}
+
+
+
+
+
+
+
+
+/*iphone14 pro Maxの時の画面サイズ*/
+@media (max-width: 430px) {
 
 
     .searchBar {
+
         display: flex;
         position: relative;
         background: #6a6660;
@@ -20,15 +53,25 @@
     .display {
         position: absolute;
         top: 50%;
-        left: 50%;
+        left: 40%;
         -webkit-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
-        width: 180px;
+        width: 160px;
         text-align: center;
         padding: 20px;
         padding-right: 200px;
-        background: #fff;
+        color:  #fff;
+        font-size: 2.0rem;
         border-radius: 15px;
+    }
+
+    .display h2{
+        position: absolute;
+        top: 90%;
+        left: 10%;
+        width:300px ;
+        font-size: 1.8rem;
+        margin-top: 40px;
     }
 
     .search {
@@ -48,4 +91,44 @@
         -webkit-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
     }
+}
+
+
+
+/*iphone15 plusの時の画面サイズ*/
+@media (max-width: 470px) {
+
+    .display {
+        position: absolute;
+        top: 40%;
+        left: 40%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        width: 160px;
+        text-align: center;
+        padding: 20px;
+        padding-right: 200px;
+        color:  #fff;
+        font-size: 2.0rem;
+        border-radius: 15px;
+    }
+
+    .arrow{
+        margin-top:250px ;
+    }
+
+
+    .underDisplay button{
+        top: 50%;
+        left: 75%;
+        border-radius: 30px;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        position: absolute;
+        margin-top:330px ;
+        padding: 6px 0;
+        font-weight: bold;
+        width: 150px;
+    }
+
 }

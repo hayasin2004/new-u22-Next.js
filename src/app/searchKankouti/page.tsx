@@ -7,10 +7,16 @@ const SearchKankouti = () => {
         <div>
             <span className={styles.searchBar}>
                 <Image src={"/images/JapanTravelKey.png"} width={430} height={932} alt={"背景画像"}/>
-            <div  >
+            <div>
                 <div className={styles.display}>
-                    <input type={"text"} className={styles.search} placeholder={"観光地検索"}></input>
-                    <button type={"submit"} className={styles.searchButton}>検索</button>
+                    <h1>Timeless Harmony</h1>
+                    <h2>nara- japan</h2>
+                    <div className={styles.underDisplay}>
+                        <Image className={styles.arrow} src={"/images/HEW.png"} width={80} height={80} alt={"背景画像"}/>
+                        <button>
+                                SHOW AROUND
+                        </button>
+                    </div>
                 </div>
             </div>
             </span>

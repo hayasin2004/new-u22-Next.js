@@ -1,90 +1,89 @@
 .box {
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-  
-  .group {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-  }
-  
-  .overlap-group {
-    background-image: url(/images/KyotoLoading.png);
-    background-position: center;
-    background-size: cover;
-    width: 100%;
-    height: 100%;
-    position: relative;
-  }
-  
-  .text-wrapper {
-    justify-self: center;
-    width: 90%;
-    color: #fff;
-    font-size: 15vw; /* スマホ向けに可変サイズ */
-    font-weight: 700;
-    font-family: "PP Hatton-Bold", Helvetica;
-    text-align: center;
-  }
-  
-  .overlap {
-    position: absolute;
-    top: 37%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    text-align: center;
-  }
-  
-  .div {
-    color: #ffffff;
-    font-family: "PP Hatton-Bold", Helvetica;
-    font-size: 5vw;
-    font-weight: 700;
-  }
-  
-  .JAPAN-TRAVEL-KEY {
-    position: absolute;
-    top: 3%;
-    left: 5%;
-    color: #ffffff;
-    font-family: "PP Hatton-Bold", Helvetica;
-    font-size: 4vw;
-    line-height: 1.5;
-  }
-  
-  .div-wrapper {
-    position: absolute;
-    bottom: 5%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #ffffff;
-    border-radius: 360px;
-    width: 60%;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .text-wrapper-2 {
-    color: #252525;
-    font-family: "Montserrat-Bold", Helvetica;
-    font-size: 4vw;
-    font-weight: 700;
-  }
-  
-  .HEX {
-    position: absolute;
-    bottom: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 15%;
-    /* max-width: 88px; */
-    height: auto;
-  }
-  
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.group {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.overlap-group {
+  background-image: url(/images/KyotoLoading.png);
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.text-wrapper {
+  justify-self: center;
+  width: 90%;
+  color: #fff;
+  font-size: 15vw; /* スマホ向けに可変サイズ */
+  font-weight: 700;
+  /* font-family: "PP Hatton-Bold", Helvetica; */
+  text-align: center;
+}
+
+.overlap {
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  text-align: center;
+}
+
+.div {
+  color: #ffffff;
+  /* font-family: "PP Hatton-Bold", Helvetica; */
+  font-size: 5vw;
+  font-weight: 700;
+}
+
+.JAPAN-TRAVEL-KEY {
+  position: absolute;
+  top: 3%;
+  left: 5%;
+  color: #ffffff;
+  /* font-family: "PP Hatton-Bold", Helvetica; */
+  font-size: 4vw;
+  line-height: 1.5;
+}
+
+.div-wrapper {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ffffff;
+  border-radius: 360px;
+  width: 60%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-wrapper-2 {
+  color: #252525;
+  /* font-family: "Montserrat-Bold", Helvetica; */
+  font-size: 4vw;
+  font-weight: 700;
+}
+
+.HEX {
+  position: absolute;
+  bottom: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 15%;
+  /* max-width: 88px; */
+  height: auto;
+}

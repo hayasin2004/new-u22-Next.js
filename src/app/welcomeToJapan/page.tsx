@@ -4,19 +4,19 @@ import Image from "next/image";
 const welcomeToJapan = () => {
     return (
         <div className={styles.container}>
-            <div className={styles.Hinomarucontainer}>
+            <div >
                 <Image
                     src="/images/Hinomaru.png"
                     alt="Hinomaru Logo"
-                    width={100}
-                    height={100}
+                    width={450}
+                    height={780}
                     className={styles.Hinomaru}
                     priority
                 />
             </div>
-            <h2 className={styles.siteName}>Welcome to <br/>Japan</h2>
-            <div className={styles.Hinomarucontainer}>
-            </div>
+            <h2 className={styles.TravelKey}>TRAVEL KEY</h2>
+            <h2 className={styles.Japan}>JAPAN</h2>
+            <h2 className={styles.DiscoverJapan}>UNLOCK THE JOURNEY. DISCOVER JAPAN</h2>
         </div>
     );
 };

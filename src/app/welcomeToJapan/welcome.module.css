@@ -1,6 +1,20 @@
 
 .container{
     background-color: #faf8f5;
-    height: 1000px;
 
+}
+.TravelKey{
+    position: absolute; bottom: 600px;
+    color: #977f42;
+}
+.Japan{
+    position: absolute;bottom: 500px;
+    color: #977f42;
+}
+.DiscoverJapan{
+    position: absolute;bottom: 400px;
+    color: #977f42;
+}
+.Hinomaru{
+    position: relative;bottom: 400px;right: 10px;
 }

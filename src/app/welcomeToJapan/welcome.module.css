@@ -1,25 +1,6 @@
-.body{
-    background-color: #f1e0c2;
-}
+
 .container{
-    background-color: #f1e0c2;
+    background-color: #faf8f5;
+    height: 1000px;
 
-}
-.Hinomarucontainer{
-    text-align: right;
-    margin-right: 30px;
-    margin-top: 100px;
-}
-
-.Hinomaru{
-    width: 80px;
-    height: auto;
-}
-
-.siteName{
-    position: relative;
-    font-size: 50px;
-    color:#1d505c;
-    text-align: center;
-    margin-top: 100px;
 }

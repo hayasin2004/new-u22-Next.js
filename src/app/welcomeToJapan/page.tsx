@@ -16,14 +16,6 @@ const welcomeToJapan = () => {
             </div>
             <h2 className={styles.siteName}>Welcome to <br/>Japan</h2>
             <div className={styles.Hinomarucontainer}>
-                <Image
-                    src="/images/tunami.png"
-                    alt="Hinomaru Logo"
-                    width={500}
-                    height={500}
-                    className={styles.Hinomaru}
-                    priority
-                />
             </div>
         </div>
     );

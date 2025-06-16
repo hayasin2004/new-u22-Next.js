@@ -1,0 +1,265 @@
+/* メインコンテナ */
+.main {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  background-image: url("/images/kyoto-bg.jpg"); /* 背景画像名を変更 */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* 背景コンテナ */
+.backgroundContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 左側テキストコンテナ - 中央に近づける */
+.leftTextContainer {
+  position: absolute;
+  left: 20%; /* 中央に近づける (元: 10%) */
+  top: 65%; /* 中央より下に配置 */
+  transform: translateY(-50%);
+  opacity: 0;
+  animation: fadeInLeft 1s ease forwards 2s; /* 3番目に表示（2秒遅延） */
+}
+
+/* 中央テキストコンテナ - 中央配置 */
+.centerTextContainer {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  animation: fadeInCenter 1s ease forwards 0.5s; /* 1番目に表示（0.5秒遅延） */
+}
+
+/* 右側テキストコンテナ - 中央に近づける */
+.rightTextContainer {
+  position: absolute;
+  right: 20%; /* 中央に近づける (元: 10%) */
+  top: 35%; /* 中央より上に配置 */
+  transform: translateY(-50%);
+  opacity: 0;
+  animation: fadeInRight 1s ease forwards 1.25s; /* 2番目に表示（1.25秒遅延） */
+}
+
+/* 装飾的な縦線 */
+.decorativeLine {
+  width: 3px;
+  height: 240px; /* 線の長さを維持 */
+  background-color: white;
+  opacity: 0.9;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+/* 中央テキスト（京都）のスタイル - CSS縦書きモード使用 */
+.centerText {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "HG Mincho E", "MS PMincho", "MS Mincho", serif;
+  font-size: 6rem;
+  font-weight: 400;
+  color: white;
+  text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+  line-height: 1.0; /* ライン高さを維持 */
+  letter-spacing: 0.3em; /* 文字間隔を維持 */
+  /* CSS縦書きモード */
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  white-space: nowrap; /* 改行を防ぐ */
+}
+
+/* 左側テキストのスタイル - フォントサイズを増加 */
+.leftText {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "HG Mincho E", "MS PMincho", "MS Mincho", serif;
+  font-size: 1.7rem; /* フォントサイズを増加 (元: 1.4rem) */
+  font-weight: 300;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  line-height: 1.6; /* ライン高さを維持 */
+  letter-spacing: 0.08em; /* 文字間隔を微調整 */
+  /* CSS縦書きモード */
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  white-space: nowrap; /* 改行を防ぐ */
+  height: auto; /* 高さを自動に設定 */
+}
+
+/* 右側テキストのスタイル - フォントサイズを増加 */
+.rightText {
+  font-family: "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "HG Mincho E", "MS PMincho", "MS Mincho", serif;
+  font-size: 1.7rem; /* フォントサイズを増加 (元: 1.4rem) */
+  font-weight: 300;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+  line-height: 1.6; /* ライン高さを維持 */
+  letter-spacing: 0.08em; /* 文字間隔を微調整 */
+  /* CSS縦書きモード */
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  white-space: nowrap; /* 改行を防ぐ */
+  height: auto; /* 高さを自動に設定 */
+}
+
+/* アニメーション定義 */
+@keyframes fadeInCenter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%); /* 下から上へ */
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateY(-40%); /* 下から上へ */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateY(-40%); /* 下から上へ */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%);
+  }
+}
+
+/* レスポンシブ対応 */
+/*@media (max-width: 768px) {*/
+/*  !* タブレット用の調整 *!*/
+/*  .centerText {*/
+/*    font-size: 6rem;*/
+/*    letter-spacing: 0.2em;*/
+/*  }*/
+
+/*  .leftText,*/
+/*  .rightText {*/
+/*    font-size: 1.4rem; !* タブレット用フォントサイズを調整 *!*/
+/*    line-height: 1.5;*/
+/*  }*/
+
+/*  !* タブレット用の位置調整 - 中央に近づける *!*/
+/*  .leftTextContainer {*/
+/*    left: 15%; !* 中央に近づける *!*/
+/*    top: 68%; !* 位置を微調整 *!*/
+/*  }*/
+
+/*  .rightTextContainer {*/
+/*    right: 15%; !* 中央に近づける *!*/
+/*    top: 32%; !* 位置を微調整 *!*/
+/*  }*/
+
+/*  .decorativeLine {*/
+/*    height: 200px;*/
+/*  }*/
+
+/*  .centerTextContainer {*/
+/*    gap: 2.5rem;*/
+/*  }*/
+/*}*/
+
+/*@media (max-width: 480px) {*/
+/*  !* モバイル用の調整 *!*/
+/*  .centerText {*/
+/*    font-size: 4.5rem;*/
+/*    letter-spacing: 0.15em;*/
+/*  }*/
+
+/*  .leftText,*/
+/*  .rightText {*/
+/*    font-size: 1.2rem; !* モバイル用フォントサイズを調整 *!*/
+/*    line-height: 1.4;*/
+/*  }*/
+
+/*  .leftTextContainer {*/
+/*    left: 12%; !* 中央に近づける *!*/
+/*    top: 70%; !* 位置を微調整 *!*/
+/*  }*/
+
+/*  .rightTextContainer {*/
+/*    right: 12%; !* 中央に近づける *!*/
+/*    top: 30%; !* 位置を微調整 *!*/
+/*  }*/
+
+/*  .decorativeLine {*/
+/*    height: 160px;*/
+/*    width: 2px;*/
+/*  }*/
+
+/*  .centerTextContainer {*/
+/*    gap: 2rem;*/
+/*  }*/
+/*}*/
+
+/*!* 高解像度ディスプレイ対応 *!*/
+/*@media (min-width: 1200px) {*/
+/*  .centerText {*/
+/*    font-size: 9rem;*/
+/*    letter-spacing: 0.4em;*/
+/*  }*/
+
+/*  .leftText,*/
+/*  .rightText {*/
+/*    font-size: 1.9rem; !* 高解像度用フォントサイズを調整 *!*/
+/*  }*/
+
+/*  .decorativeLine {*/
+/*    height: 280px;*/
+/*    width: 4px;*/
+/*  }*/
+
+/*  .centerTextContainer {*/
+/*    gap: 3.5rem;*/
+/*  }*/
+
+/*  !* 大画面での位置調整 - 中央に近づける *!*/
+/*  .leftTextContainer {*/
+/*    left: 22%; !* 中央に近づける *!*/
+/*    top: 63%;*/
+/*  }*/
+
+/*  .rightTextContainer {*/
+/*    right: 22%; !* 中央に近づける *!*/
+/*    top: 37%;*/
+/*  }*/
+/*}*/
+
+/*!* 超高解像度対応 *!*/
+/*@media (min-width: 1600px) {*/
+/*  .centerText {*/
+/*    font-size: 10rem;*/
+/*  }*/
+
+/*  .leftText,*/
+/*  .rightText {*/
+/*    font-size: 2.1rem; !* 超高解像度用フォントサイズを調整 *!*/
+/*  }*/
+
+/*  !* 超大画面での位置調整 *!*/
+/*  .leftTextContainer {*/
+/*    left: 25%;*/
+/*  }*/
+
+/*  .rightTextContainer {*/
+/*    right: 25%;*/
+/*  }*/
+/*}*/

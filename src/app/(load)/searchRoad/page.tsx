@@ -1,102 +1,260 @@
-'use client';
+"use client"
+
 import React, { useState } from 'react';
-import { GoogleMap, Polyline, Marker, useLoadScript } from "@react-google-maps/api";
-import { Navigation, MapPin, Clock, Route as RouteIcon, Car, User, Bike, Train } from 'lucide-react';
+import { Navigation, MapPin, Clock, Route, Car, Bike, User, Bus, AlertCircle, Loader2 } from 'lucide-react';
 
-type LatLng = { lat: number; lng: number };
-type TravelMode = 'DRIVING' | 'WALKING' | 'BICYCLING' | 'TRANSIT';
+interface StepData {
+    instructions: string;
+    distance: { text: string; value: number };
+    duration: { text: string; value: number };
+}
 
-const SearchRoad = () => {
-    const [route, setRoute] = useState<any>(null);
-    const [startPosition, setStartPosition] = useState<string>('東京駅');
-    const [goalPosition, setGoalPosition] = useState<string>('新宿駅');
-    const [travelMode, setTravelMode] = useState<TravelMode>('DRIVING');
+interface LegData {
+    distance: { text: string; value: number };
+    duration: { text: string; value: number };
+    startAddress: string;
+    endAddress: string;
+    steps: StepData[];
+}
+
+interface RouteData {
+    summary: string;
+    legs: LegData[];
+}
+
+interface DirectionsApiResponse {
+    success: boolean;
+    data?: {
+        routes: RouteData[];
+    };
+    error?: string;
+}
+
+const SimpleNavigationApp: React.FC = () => {
+    const [origin, setOrigin] = useState('');
+    const [destination, setDestination] = useState('');
+    const [travelMode, setTravelMode] = useState<'DRIVING' | 'WALKING' | 'BICYCLING' | 'TRANSIT'>('DRIVING');
+    const [routes, setRoutes] = useState<RouteData[]>([]);
     const [loading, setLoading] = useState(false);
-    const { isLoaded } = useLoadScript({ googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "" });
+    const [error, setError] = useState<string | null>(null);
 
-    const fetchRoute = async () => {
+    const travelModeOptions = [
+        { value: 'DRIVING', label: '車', icon: Car },
+        { value: 'WALKING', label: '徒歩', icon: User },
+        { value: 'BICYCLING', label: '自転車', icon: Bike },
+        { value: 'TRANSIT', label: '公共交通機関', icon: Bus },
+    ];
+
+    const stripHtml = (html: string): string => {
+        return html.replace(/<[^>]*>/g, '');
+    };
+
+    const searchRoute = async () => {
+        if (!origin.trim() || !destination.trim()) {
+            setError('出発地と目的地を入力してください');
+            return;
+        }
+
         setLoading(true);
+        setError(null);
+        setRoutes([]);
+
         try {
-            const response = await fetch('/api/directions/', { // 修正済み
+            const response = await fetch('/api/directions', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ origin: startPosition, destination: goalPosition, travelMode }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    origin: origin.trim(),
+                    destination: destination.trim(),
+                    travelMode,
+                    language: 'ja',
+                }),
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response:', errorText);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            const result: DirectionsApiResponse = await response.json();
 
-            const data = await response.json();
-            if (data.success) {
-                setRoute(data.data[0]);
+            if (result.success && result.data) {
+                setRoutes(result.data.routes);
             } else {
-                console.error('API Error:', data.error);
-                throw new Error(data.error || 'Unknown error occurred');
+                setError(result.error || 'ルートの検索に失敗しました');
             }
-        } catch (error) {
-            console.error('Failed to fetch route:', error);
-            alert(`ルートの取得に失敗しました: ${error}`);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : '不明なエラーが発生しました');
         } finally {
             setLoading(false);
         }
     };
-    const decodePolyline = (encoded: string) => {
-        const points = [];
-        let index = 0, lat = 0, lng = 0;
-        while (index < encoded.length) {
-            let result = 0, shift = 0, b;
-            do { b = encoded.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
-            lat += result & 1 ? ~(result >> 1) : result >> 1;
-            result = shift = 0;
-            do { b = encoded.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
-            lng += result & 1 ? ~(result >> 1) : result >> 1;
-            points.push({ lat: lat / 1e5, lng: lng / 1e5 });
-        }
-        return points;
-    };
 
-    if (!isLoaded) return <p>マップを読み込み中...</p>;
+    const currentRoute = routes[0];
+    const currentLeg = currentRoute?.legs[0];
+    const steps = currentLeg?.steps || [];
 
     return (
-        <div className="p-4 max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
-                <RouteIcon className="w-6 h-6" /> ルート検索
-            </h1>
-            <div className="grid grid-cols-2 gap-4">
-                <input value={startPosition} onChange={(e) => setStartPosition(e.target.value)} placeholder="出発地" className="p-2 border rounded" />
-                <input value={goalPosition} onChange={(e) => setGoalPosition(e.target.value)} placeholder="目的地" className="p-2 border rounded" />
-            </div>
-            <div className="flex gap-2 my-4">
-                {['DRIVING', 'WALKING', 'BICYCLING', 'TRANSIT'].map(mode => (
-                    <button key={mode} onClick={() => setTravelMode(mode as TravelMode)} className={`p-2 border rounded ${travelMode === mode ? 'bg-blue-500 text-white' : ''}`}>
-                        {mode}
-                    </button>
-                ))}
-            </div>
-            <button onClick={fetchRoute} disabled={loading} className="bg-blue-500 text-white p-2 rounded">
-                {loading ? '検索中...' : 'ルート検索'}
-            </button>
-            {route && (
-                <div className="mt-4">
-                    <h2 className="text-lg font-bold">ルート詳細</h2>
-                    <p>距離: {route.legs[0].distance.text}</p>
-                    <p>時間: {route.legs[0].duration.text}</p>
-                    <GoogleMap
-                        mapContainerStyle={{ width: '100%', height: '400px' }}
-                        center={route.legs[0].start_location}
-                        zoom={13}
+        <div className="max-w-4xl mx-auto p-6 space-y-6">
+            {/* ヘッダー */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+                <h1 className="text-2xl font-bold flex items-center gap-2 mb-6">
+                    <Navigation className="h-6 w-6 text-blue-600" />
+                    ナビゲーション
+                </h1>
+
+                <div className="space-y-4">
+                    {/* 出発地 */}
+                    <div>
+                        <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-green-600" />
+                            出発地
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="出発地を入力してください"
+                            value={origin}
+                            onChange={(e) => setOrigin(e.target.value)}
+                            disabled={loading}
+                        />
+                    </div>
+
+                    {/* 目的地 */}
+                    <div>
+                        <label className="block text-sm font-medium mb-2 flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-red-600" />
+                            目的地
+                        </label>
+                        <input
+                            type="text"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="目的地を入力してください"
+                            value={destination}
+                            onChange={(e) => setDestination(e.target.value)}
+                            disabled={loading}
+                        />
+                    </div>
+
+                    {/* 移動手段 */}
+                    <div>
+                        <label className="block text-sm font-medium mb-2">移動手段</label>
+                        <select
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            value={travelMode}
+                            onChange={(e) => setTravelMode(e.target.value as any)}
+                            disabled={loading}
+                        >
+                            {travelModeOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* 検索ボタン */}
+                    <button
+                        onClick={searchRoute}
+                        disabled={loading || !origin.trim() || !destination.trim()}
+                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
-                        <Polyline path={decodePolyline(route.overview_polyline.points)} options={{ strokeColor: '#0000FF' }} />
-                        <Marker position={route.legs[0].start_location} />
-                        <Marker position={route.legs[0].end_location} />
-                    </GoogleMap>
+                        {loading ? (
+                            <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                検索中...
+                            </>
+                        ) : (
+                            <>
+                                <Route className="h-4 w-4" />
+                                ルート検索
+                            </>
+                        )}
+                    </button>
+                </div>
+            </div>
+
+            {/* エラー表示 */}
+            {error && (
+                <div className="bg-red-50 border border-red-200 rounded-md p-4 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-red-600" />
+                    <span className="text-red-700">{error}</span>
+                </div>
+            )}
+
+            {/* ルート結果 */}
+            {currentRoute && currentLeg && (
+                <div className="space-y-6">
+                    {/* ルート概要 */}
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <h2 className="text-xl font-bold mb-4">ルート概要</h2>
+
+                        <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div className="flex items-center gap-2">
+                                <Route className="h-4 w-4 text-blue-600" />
+                                <div>
+                                    <div className="text-sm text-gray-600">距離</div>
+                                    <div className="font-semibold">{currentLeg.distance.text}</div>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Clock className="h-4 w-4 text-green-600" />
+                                <div>
+                                    <div className="text-sm text-gray-600">所要時間</div>
+                                    <div className="font-semibold">{currentLeg.duration.text}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex items-start gap-2">
+                                <MapPin className="h-4 w-4 text-green-600 mt-1" />
+                                <div>
+                                    <div className="text-sm text-gray-600">出発地</div>
+                                    <div className="text-sm">{currentLeg.startAddress}</div>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-2">
+                                <MapPin className="h-4 w-4 text-red-600 mt-1" />
+                                <div>
+                                    <div className="text-sm text-gray-600">目的地</div>
+                                    <div className="text-sm">{currentLeg.endAddress}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* ナビゲーション案内 */}
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        <h2 className="text-xl font-bold mb-4">ナビゲーション案内</h2>
+
+                        {steps.length > 0 ? (
+                            <div className="space-y-3">
+                                {steps.map((step, index) => (
+                                    <div key={index} className="border border-gray-200 rounded-md p-4">
+                                        <div className="flex items-start gap-3">
+                                            <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
+                                                {index + 1}
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="font-medium mb-1">
+                                                    {stripHtml(step.instructions)}
+                                                </div>
+                                                <div className="text-sm text-gray-600">
+                                                    {step.distance.text} • {step.duration.text}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center text-gray-500 py-8">
+                                ルートを検索すると、ここにナビゲーション案内が表示されます
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>
     );
 };
 
-export default SearchRoad;
+export default SimpleNavigationApp;

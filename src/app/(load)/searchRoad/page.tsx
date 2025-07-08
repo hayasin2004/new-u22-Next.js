@@ -1,116 +1,130 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
-import { Navigation, MapPin, Clock, Route, Car, Bike, User, Bus, AlertCircle, Loader2 } from 'lucide-react';
-
-interface StepData {
-    instructions: string;
-    distance: { text: string; value: number };
-    duration: { text: string; value: number };
-}
-
-interface LegData {
-    distance: { text: string; value: number };
-    duration: { text: string; value: number };
-    startAddress: string;
-    endAddress: string;
-    steps: StepData[];
-}
-
-interface RouteData {
-    summary: string;
-    legs: LegData[];
-}
-
-interface DirectionsApiResponse {
-    success: boolean;
-    data?: {
-        routes: RouteData[];
-    };
-    error?: string;
-}
+import React, { useState, useEffect, useRef } from "react";
+import { Navigation, MapPin, Route, Car, Bike, User, Bus, AlertCircle, Loader2, Map } from "lucide-react";
 
 const SimpleNavigationApp: React.FC = () => {
-    const [origin, setOrigin] = useState('');
-    const [destination, setDestination] = useState('');
-    const [travelMode, setTravelMode] = useState<'DRIVING' | 'WALKING' | 'BICYCLING' | 'TRANSIT'>('DRIVING');
-    const [routes, setRoutes] = useState<RouteData[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [origin, setOrigin] = useState(""); // 出発地
+    const [destination, setDestination] = useState(""); // 目的地
+    const [travelMode, setTravelMode] = useState<string>("DRIVING"); // 移動手段
+    const [loading, setLoading] = useState(false); // ローディング状態
+    const [error, setError] = useState<string | null>(null); // エラーメッセージ
+    const mapRef = useRef<HTMLDivElement>(null); // マップの参照
+    const [map, setMap] = useState<google.maps.Map | null>(null); // Google Maps インスタンス
+    const directionsRendererRef = useRef<google.maps.DirectionsRenderer | null>(null); // DirectionsRendererの参照
+    const trafficLayerRef = useRef<google.maps.TrafficLayer | null>(null); // TrafficLayerの参照
 
     const travelModeOptions = [
-        { value: 'DRIVING', label: '車', icon: Car },
-        { value: 'WALKING', label: '徒歩', icon: User },
-        { value: 'BICYCLING', label: '自転車', icon: Bike },
-        { value: 'TRANSIT', label: '公共交通機関', icon: Bus },
+        { value: "DRIVING", label: "車", icon: Car },
+        { value: "WALKING", label: "徒歩", icon: User },
+        { value: "BICYCLING", label: "自転車", icon: Bike },
+        { value: "TRANSIT", label: "公共交通機関", icon: Bus },
     ];
 
-    const stripHtml = (html: string): string => {
-        return html.replace(/<[^>]*>/g, '');
-    };
+    // Google Maps APIのスクリプトを動的に読み込む
+    useEffect(() => {
+        const loadGoogleMapsScript = () => {
+            const script = document.createElement("script");
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
+            script.async = true;
+            script.onload = () => {
+                initMap();
+            };
+            document.head.appendChild(script);
+        };
 
+        const initMap = () => {
+            if (!mapRef.current) return;
+
+            const mapInstance = new google.maps.Map(mapRef.current, {
+                center: { lat: 35.6895, lng: 139.6917 }, // 東京の中心座標
+                zoom: 14,
+            });
+
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            directionsRenderer.setMap(mapInstance);
+
+            const trafficLayer = new google.maps.TrafficLayer();
+            trafficLayerRef.current = trafficLayer;
+
+            setMap(mapInstance);
+            directionsRendererRef.current = directionsRenderer;
+        };
+
+        if (!window.google) {
+            loadGoogleMapsScript();
+        } else {
+            initMap();
+        }
+    }, []);
+
+    // travelMode の変更を監視して TrafficLayer を追加または削除
+    useEffect(() => {
+        if (map && trafficLayerRef.current) {
+            if (travelMode === "DRIVING") {
+                trafficLayerRef.current.setMap(map); // 車の場合、TrafficLayerを表示
+            } else {
+                trafficLayerRef.current.setMap(null); // その他の場合、TrafficLayerを非表示
+            }
+        }
+    }, [travelMode]);
+
+    // ルート検索とマップ描画
     const searchRoute = async () => {
         if (!origin.trim() || !destination.trim()) {
-            setError('出発地と目的地を入力してください');
+            setError("出発地と目的地を入力してください");
             return;
         }
 
         setLoading(true);
         setError(null);
-        setRoutes([]);
 
         try {
-            const response = await fetch('/api/directions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    origin: origin.trim(),
-                    destination: destination.trim(),
-                    travelMode,
-                    language: 'ja',
-                }),
-            });
-
-            const result: DirectionsApiResponse = await response.json();
-
-            if (result.success && result.data) {
-                setRoutes(result.data.routes);
-            } else {
-                setError(result.error || 'ルートの検索に失敗しました');
+            if (!map || !directionsRendererRef.current) {
+                throw new Error("マップが初期化されていません");
             }
+
+            const directionsService = new google.maps.DirectionsService();
+
+            const request: google.maps.DirectionsRequest = {
+                origin,
+                destination,
+                travelMode: travelMode as google.maps.TravelMode,
+            };
+
+            directionsService.route(request, (result, status) => {
+                if (status === google.maps.DirectionsStatus.OK) {
+                    directionsRendererRef.current?.setDirections(result);
+                } else {
+                    setError("ルート案内に失敗しました: " + status);
+                }
+            });
         } catch (err) {
-            setError(err instanceof Error ? err.message : '不明なエラーが発生しました');
+            setError(err instanceof Error ? err.message : "不明なエラーが発生しました");
         } finally {
             setLoading(false);
         }
     };
 
-    const currentRoute = routes[0];
-    const currentLeg = currentRoute?.legs[0];
-    const steps = currentLeg?.steps || [];
-
     return (
-        <div className="max-w-4xl mx-auto p-6 space-y-6">
+        <div>
             {/* ヘッダー */}
-            <div className="bg-white rounded-lg shadow-md p-6">
-                <h1 className="text-2xl font-bold flex items-center gap-2 mb-6">
-                    <Navigation className="h-6 w-6 text-blue-600" />
+            <div>
+                <h1>
+                    <Navigation />
                     ナビゲーション
                 </h1>
 
-                <div className="space-y-4">
+                <div>
                     {/* 出発地 */}
                     <div>
-                        <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-green-600" />
+                        <label>
+                            <MapPin />
                             出発地
                         </label>
                         <input
                             type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="出発地を入力してください"
+                            placeholder="例: 東京駅"
                             value={origin}
                             onChange={(e) => setOrigin(e.target.value)}
                             disabled={loading}
@@ -119,14 +133,13 @@ const SimpleNavigationApp: React.FC = () => {
 
                     {/* 目的地 */}
                     <div>
-                        <label className="block text-sm font-medium mb-2 flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-red-600" />
+                        <label>
+                            <MapPin />
                             目的地
                         </label>
                         <input
                             type="text"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="目的地を入力してください"
+                            placeholder="例: 新宿駅"
                             value={destination}
                             onChange={(e) => setDestination(e.target.value)}
                             disabled={loading}
@@ -135,11 +148,10 @@ const SimpleNavigationApp: React.FC = () => {
 
                     {/* 移動手段 */}
                     <div>
-                        <label className="block text-sm font-medium mb-2">移動手段</label>
+                        <label>移動手段</label>
                         <select
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             value={travelMode}
-                            onChange={(e) => setTravelMode(e.target.value as any)}
+                            onChange={(e) => setTravelMode(e.target.value)}
                             disabled={loading}
                         >
                             {travelModeOptions.map((option) => (
@@ -150,109 +162,37 @@ const SimpleNavigationApp: React.FC = () => {
                         </select>
                     </div>
 
-                    {/* 検索ボタン */}
-                    <button
-                        onClick={searchRoute}
-                        disabled={loading || !origin.trim() || !destination.trim()}
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                    >
-                        {loading ? (
-                            <>
-                                <Loader2 className="h-4 w-4 animate-spin" />
-                                検索中...
-                            </>
-                        ) : (
-                            <>
-                                <Route className="h-4 w-4" />
-                                ルート検索
-                            </>
-                        )}
-                    </button>
+                    {/* ルート検索ボタン */}
+                    <div>
+                        <button
+                            onClick={searchRoute}
+                            disabled={loading || !origin.trim() || !destination.trim()}
+                        >
+                            {loading ? "検索中..." : "ルート検索"}
+                        </button>
+                    </div>
                 </div>
             </div>
 
             {/* エラー表示 */}
             {error && (
-                <div className="bg-red-50 border border-red-200 rounded-md p-4 flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-red-600" />
-                    <span className="text-red-700">{error}</span>
+                <div>
+                    <AlertCircle />
+                    <span>{error}</span>
                 </div>
             )}
 
-            {/* ルート結果 */}
-            {currentRoute && currentLeg && (
-                <div className="space-y-6">
-                    {/* ルート概要 */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-xl font-bold mb-4">ルート概要</h2>
-
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div className="flex items-center gap-2">
-                                <Route className="h-4 w-4 text-blue-600" />
-                                <div>
-                                    <div className="text-sm text-gray-600">距離</div>
-                                    <div className="font-semibold">{currentLeg.distance.text}</div>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Clock className="h-4 w-4 text-green-600" />
-                                <div>
-                                    <div className="text-sm text-gray-600">所要時間</div>
-                                    <div className="font-semibold">{currentLeg.duration.text}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-2">
-                            <div className="flex items-start gap-2">
-                                <MapPin className="h-4 w-4 text-green-600 mt-1" />
-                                <div>
-                                    <div className="text-sm text-gray-600">出発地</div>
-                                    <div className="text-sm">{currentLeg.startAddress}</div>
-                                </div>
-                            </div>
-                            <div className="flex items-start gap-2">
-                                <MapPin className="h-4 w-4 text-red-600 mt-1" />
-                                <div>
-                                    <div className="text-sm text-gray-600">目的地</div>
-                                    <div className="text-sm">{currentLeg.endAddress}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* ナビゲーション案内 */}
-                    <div className="bg-white rounded-lg shadow-md p-6">
-                        <h2 className="text-xl font-bold mb-4">ナビゲーション案内</h2>
-
-                        {steps.length > 0 ? (
-                            <div className="space-y-3">
-                                {steps.map((step, index) => (
-                                    <div key={index} className="border border-gray-200 rounded-md p-4">
-                                        <div className="flex items-start gap-3">
-                                            <div className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">
-                                                {index + 1}
-                                            </div>
-                                            <div className="flex-1">
-                                                <div className="font-medium mb-1">
-                                                    {stripHtml(step.instructions)}
-                                                </div>
-                                                <div className="text-sm text-gray-600">
-                                                    {step.distance.text} • {step.duration.text}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center text-gray-500 py-8">
-                                ルートを検索すると、ここにナビゲーション案内が表示されます
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
+            {/* マップ表示 */}
+            <div>
+                <h2>
+                    <Map />
+                    マップ
+                </h2>
+                <div
+                    ref={mapRef}
+                    style={{ width: "100%", height: "400px", backgroundColor: "#f0f0f0" }}
+                />
+            </div>
         </div>
     );
 };

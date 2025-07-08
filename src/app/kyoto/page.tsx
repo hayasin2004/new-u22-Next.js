@@ -13,12 +13,14 @@ export default function KyotoPage() {
                 {/* 中央のテキスト - 1番目に表示 */}
                 <div className={styles.centerTextContainer}>
                     {/* 装飾的な縦線（左） */}
-                    <div className={styles.decorativeLine}></div>
+                    <div className={styles.decorativeLine1}></div>
+                    <div className={styles.decorativeLine2}></div>
 
                     <div className={styles.centerText}>京都</div>
 
                     {/* 装飾的な縦線（右） */}
-                    <div className={styles.decorativeLine}></div>
+                    <div className={styles.decorativeLine2}></div>
+                    <div className={styles.decorativeLine1}></div>
                 </div>
 
                 {/* 右側のテキスト - 2番目に表示 */}

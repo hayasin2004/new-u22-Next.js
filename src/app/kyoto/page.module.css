@@ -23,8 +23,8 @@
 /* 左側テキストコンテナ - 中央に近づける */
 .leftTextContainer {
   position: absolute;
-  left: 20%; /* 中央に近づける (元: 10%) */
-  top: 65%; /* 中央より下に配置 */
+  left: 15%; /* 中央に近づける (元: 10%) */
+  top: 50%; /* 中央より下に配置 */
   transform: translateY(-50%);
   opacity: 0;
   animation: fadeInLeft 1s ease forwards 2s; /* 3番目に表示（2秒遅延） */
@@ -34,11 +34,11 @@
 .centerTextContainer {
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 35%;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.6rem;
   opacity: 0;
   animation: fadeInCenter 1s ease forwards 0.5s; /* 1番目に表示（0.5秒遅延） */
 }
@@ -46,16 +46,23 @@
 /* 右側テキストコンテナ - 中央に近づける */
 .rightTextContainer {
   position: absolute;
-  right: 20%; /* 中央に近づける (元: 10%) */
-  top: 35%; /* 中央より上に配置 */
+  right: 15%; /* 中央に近づける (元: 10%) */
+  top: 25%; /* 中央より上に配置 */
   transform: translateY(-50%);
   opacity: 0;
   animation: fadeInRight 1s ease forwards 1.25s; /* 2番目に表示（1.25秒遅延） */
 }
 
 /* 装飾的な縦線 */
-.decorativeLine {
+.decorativeLine1 {
   width: 3px;
+  height: 240px; /* 線の長さを維持 */
+  background-color: white;
+  opacity: 0.9;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+.decorativeLine2 {
+  width: 2px;
   height: 240px; /* 線の長さを維持 */
   background-color: white;
   opacity: 0.9;
@@ -71,6 +78,7 @@
   text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
   line-height: 1.0; /* ライン高さを維持 */
   letter-spacing: 0.3em; /* 文字間隔を維持 */
+  padding-top: 20px;
   /* CSS縦書きモード */
   writing-mode: vertical-rl;
   text-orientation: upright;

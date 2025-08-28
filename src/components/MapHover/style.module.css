@@ -1,0 +1,26 @@
+/* JapanMap.module.css */
+.mapWrapper {
+  height: 100vh;
+  background-color: #53a8ca;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+.mapWrapper svg {
+  margin-top: 30%;
+  width: 87%;
+  height: auto;
+  display: block;
+}
+
+.mapWrapper path {
+  fill: #e0e0e0;
+  stroke: #666;
+  stroke-width: 0.5;
+  transition: fill 0.2s ease;
+  cursor: pointer;
+}
+
+.mapWrapper path:hover {
+  fill: #007bff;
+}
